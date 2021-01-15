@@ -15,8 +15,11 @@ repositories {
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter'
 	implementation('com.github.pengrad:java-telegram-bot-api:5.0.1')
+	implementation('org.apache.lucene:lucene-core:8.7.0')
+	implementation('org.apache.lucene:lucene-queryparser:8.7.0')
 
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation('org.springframework.boot:spring-boot-starter-test')
+	testImplementation('org.assertj:assertj-core:3.18.1')
 }
 
 test {
