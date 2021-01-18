@@ -5,13 +5,13 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public class TrafficOffence {
+public class TrafficOffenceArticle {
 
     private final String number;
     private final String title;
     private final String text;
 
-    public TrafficOffence(String number, String title, String text) {
+    public TrafficOffenceArticle(String number, String title, String text) {
         this.number = Objects.requireNonNull(number);
         this.title = Objects.requireNonNull(title);
         this.text = Objects.requireNonNull(text);
@@ -55,8 +55,8 @@ public class TrafficOffence {
             textLines.add(textLine);
         }
 
-        public TrafficOffence trafficOffence() {
-            return new TrafficOffence(number, title, text());
+        public TrafficOffenceArticle trafficOffence() {
+            return new TrafficOffenceArticle(number, title, text());
         }
 
         private String text() {

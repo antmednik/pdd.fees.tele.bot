@@ -1,12 +1,12 @@
 package io.traffic.offences.fees.bot.index;
 
-import io.traffic.offences.fees.bot.domain.TrafficOffence;
+import io.traffic.offences.fees.bot.domain.TrafficOffenceArticle;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.Term;
 
-public class TrafficOffenceDocumentWrapper {
+public class TrafficOffenceArticleDocumentWrapper {
 
     public static class FieldTerm {
         public static Term number(String text) {
@@ -32,30 +32,28 @@ public class TrafficOffenceDocumentWrapper {
         return new String[]{FIELD_NAME_NUMBER, FIELD_NAME_TITLE, FIELD_NAME_TEXT};
     }
 
-    public static Term numberFieldTerm(String text) {
-        return new Term(FIELD_NAME_NUMBER, text);
-    }
-
-
-
-    public TrafficOffenceDocumentWrapper(Document document) {
+    public TrafficOffenceArticleDocumentWrapper(Document document) {
         this.document = document;
     }
 
-    public TrafficOffenceDocumentWrapper(TrafficOffence article) {
+    public TrafficOffenceArticleDocumentWrapper(TrafficOffenceArticle article) {
         document = new Document();
         document.add(new TextField(FIELD_NAME_NUMBER, article.number(), Field.Store.YES));
         document.add(new TextField(FIELD_NAME_TITLE, article.title(), Field.Store.YES));
         document.add(new TextField(FIELD_NAME_TEXT, article.text(), Field.Store.YES));
     }
 
+    public String number() {
+        return document.getField(FIELD_NAME_NUMBER).stringValue();
+    }
+
     public Document document() {
         return document;
     }
 
-    public TrafficOffence trafficRule() {
-        return new TrafficOffence(
-                document.getField(FIELD_NAME_NUMBER).stringValue(),
+    public TrafficOffenceArticle trafficRule() {
+        return new TrafficOffenceArticle(
+                number(),
                 document.getField(FIELD_NAME_TITLE).stringValue(),
                 document.getField(FIELD_NAME_TEXT).stringValue());
     }

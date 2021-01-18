@@ -1,6 +1,6 @@
 package io.traffic.offences.fees.bot.index;
 
-import io.traffic.offences.fees.bot.domain.TrafficOffence;
+import io.traffic.offences.fees.bot.domain.TrafficOffenceArticle;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -12,7 +12,7 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class TrafficOffencesIndexTest {
+public class TrafficOffenceArticlesIndexTestArticle {
 
     static class SearchTopTenArgumentsProvider implements ArgumentsProvider {
 
@@ -68,11 +68,11 @@ public class TrafficOffencesIndexTest {
     @ArgumentsSource(SearchTopTenArgumentsProvider.class)
     public void givenIndexWhenSearchTopTenCalledThenGotExpectedResults(String query, List<String> foundTrafficRulesNumbers) {
         // given
-        TrafficOffencesIndex sut = new TrafficOffencesIndex();
+        TrafficOffenceArticlesIndex sut = new TrafficOffenceArticlesIndex();
         sut.build(testArticles());
 
         // when
-        List<TrafficOffence> results = sut.searchTopTen(query);
+        List<TrafficOffenceArticle> results = sut.searchTopTen(query);
 
         // then
         assertThat(results).isNotNull();
@@ -88,11 +88,11 @@ public class TrafficOffencesIndexTest {
     @ArgumentsSource(value = FuzzySearchTopTenArgumentsProvider.class)
     public void givenIndexWhenFuzzySearchTopTenCalledThenGotExpectedResults(String query, List<String> foundTrafficRulesNumbers) {
         // given
-        TrafficOffencesIndex sut = new TrafficOffencesIndex();
+        TrafficOffenceArticlesIndex sut = new TrafficOffenceArticlesIndex();
         sut.build(testArticles());
 
         // when
-        List<TrafficOffence> results = sut.fuzzySearchTopTen(query);
+        List<TrafficOffenceArticle> results = sut.fuzzySearchTopTen(query);
 
         // then
         assertThat(results).isNotNull();
@@ -104,8 +104,8 @@ public class TrafficOffencesIndexTest {
         }
     }
 
-    private List<TrafficOffence> testArticles() {
-        return List.of(new TrafficOffence("Статья 12.1.",
+    private List<TrafficOffenceArticle> testArticles() {
+        return List.of(new TrafficOffenceArticle("Статья 12.1.",
                         "Управление транспортным средством, не зарегистрированным в установленном порядке, транспортным средством, не прошедшим государственного технического осмотра или технического осмотра",
                         """
                                 1. Управление транспортным средством, не зарегистрированным в установленном порядке, -
@@ -130,7 +130,7 @@ public class TrafficOffencesIndexTest {
                                 самоходные дорожно-строительные и иные самоходные машины, транспортные средства, на
                                 управление которыми в соответствии с законодательством Российской Федерации о безопасности
                                 дорожного движения предоставляется специальное право."""),
-                new TrafficOffence("Статья 12.2.",
+                new TrafficOffenceArticle("Статья 12.2.",
                         "Управление транспортным средством с нарушением правил установки на нем государственных регистрационных знаков",
                         """
                                 1. Управление транспортным средством с нечитаемыми, нестандартными или
