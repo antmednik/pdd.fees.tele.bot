@@ -12,7 +12,7 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class TrafficOffenceArticlesIndexTestArticle {
+class TrafficOffenceArticlesIndexTest {
 
     static class SearchTopTenArgumentsProvider implements ArgumentsProvider {
 
@@ -66,19 +66,18 @@ public class TrafficOffenceArticlesIndexTestArticle {
 
     @ParameterizedTest
     @ArgumentsSource(SearchTopTenArgumentsProvider.class)
-    public void givenIndexWhenSearchTopTenCalledThenGotExpectedResults(String query, List<String> foundTrafficRulesNumbers) {
+    void givenIndexWhenSearchTopTenCalledThenGotExpectedResults(String query, List<String> foundTrafficRulesNumbers) {
         // given
         TrafficOffenceArticlesIndex sut = new TrafficOffenceArticlesIndex();
         sut.build(testArticles());
 
         // when
-        List<TrafficOffenceArticle> results = sut.searchTopTen(query);
+        List<TrafficOffenceArticle> results = sut.searchTopResults(query);
 
         // then
-        assertThat(results).isNotNull();
-        assertThat(results).hasSize(foundTrafficRulesNumbers.size());
+        assertThat(results).isNotNull().hasSize(foundTrafficRulesNumbers.size());
         for (int idx = 0; idx < foundTrafficRulesNumbers.size(); idx++) {
-            String actualTrafficRuleNumber = results.get(idx).number();
+            String actualTrafficRuleNumber = results.get(idx).getNumber();
             String expectedTrafficRuleNumber = foundTrafficRulesNumbers.get(idx);
             assertThat(actualTrafficRuleNumber).isEqualTo(expectedTrafficRuleNumber);
         }
@@ -86,19 +85,18 @@ public class TrafficOffenceArticlesIndexTestArticle {
 
     @ParameterizedTest
     @ArgumentsSource(value = FuzzySearchTopTenArgumentsProvider.class)
-    public void givenIndexWhenFuzzySearchTopTenCalledThenGotExpectedResults(String query, List<String> foundTrafficRulesNumbers) {
+    void givenIndexWhenFuzzySearchTopTenCalledThenGotExpectedResults(String query, List<String> foundTrafficRulesNumbers) {
         // given
         TrafficOffenceArticlesIndex sut = new TrafficOffenceArticlesIndex();
         sut.build(testArticles());
 
         // when
-        List<TrafficOffenceArticle> results = sut.fuzzySearchTopTen(query);
+        List<TrafficOffenceArticle> results = sut.fuzzySearchTopResults(query);
 
         // then
-        assertThat(results).isNotNull();
-        assertThat(results).hasSize(foundTrafficRulesNumbers.size());
+        assertThat(results).isNotNull().hasSize(foundTrafficRulesNumbers.size());
         for (int idx = 0; idx < foundTrafficRulesNumbers.size(); idx++) {
-            String actualTrafficRuleNumber = results.get(idx).number();
+            String actualTrafficRuleNumber = results.get(idx).getNumber();
             String expectedTrafficRuleNumber = foundTrafficRulesNumbers.get(idx);
             assertThat(actualTrafficRuleNumber).isEqualTo(expectedTrafficRuleNumber);
         }

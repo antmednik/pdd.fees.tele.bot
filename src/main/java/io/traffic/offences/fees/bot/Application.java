@@ -1,10 +1,12 @@
 package io.traffic.offences.fees.bot;
 
-import io.traffic.offences.fees.bot.telegram.pengrad.PengradTelegramApiClient;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
+
+import java.io.UnsupportedEncodingException;
+import java.security.NoSuchAlgorithmException;
 
 @SpringBootApplication
 @EnableScheduling	// todo: move to separate config
@@ -15,9 +17,8 @@ public class Application {
 	}
 
 	@Scheduled(fixedDelayString = "100000")
-	public static void testGetMe() {
-		var client = new PengradTelegramApiClient("");
-		client.getMe();
+	public static void testGetMe() throws NoSuchAlgorithmException, UnsupportedEncodingException {
+		/*var client = new PengradTelegramApiClient("", null);
+		var response = client.getUpdates(new GenericGetUpdatesRequest());*/
 	}
-
 }

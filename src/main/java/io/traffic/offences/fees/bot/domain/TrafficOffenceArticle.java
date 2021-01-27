@@ -1,10 +1,16 @@
 package io.traffic.offences.fees.bot.domain;
 
+import lombok.Getter;
+
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+@ParametersAreNonnullByDefault
+@Getter
 public class TrafficOffenceArticle {
 
     private final String number;
@@ -17,50 +23,16 @@ public class TrafficOffenceArticle {
         this.text = Objects.requireNonNull(text);
     }
 
-    public String number() {
-        return number;
-    }
-
-    public String title() {
-        return title;
-    }
-
-    public String text() {
-        return text;
-    }
-
-    public static class Builder {
-        private String number;
-        private String title;
-        private final List<String> textLines;
-
-        public Builder() {
-            textLines = new ArrayList<>();
-        }
-
-        public Builder number(String number) {
-            this.number = number;
-            return this;
-        }
-
-        public String title() {
-            return title;
-        }
-
-        public void title(String title) {
-            this.title = title;
-        }
-
-        public void addTextLine(String textLine) {
-            textLines.add(textLine);
-        }
-
-        public TrafficOffenceArticle trafficOffence() {
-            return new TrafficOffenceArticle(number, title, text());
-        }
-
-        private String text() {
-            return textLines.stream().collect(Collectors.joining(System.lineSeparator()));
-        }
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder("Статья ");
+        builder.append(number);
+        builder.append(System.lineSeparator());
+        builder.append(System.lineSeparator());
+        builder.append(title);
+        builder.append(System.lineSeparator());
+        builder.append(System.lineSeparator());
+        builder.append(text);
+        return builder.toString();
     }
 }

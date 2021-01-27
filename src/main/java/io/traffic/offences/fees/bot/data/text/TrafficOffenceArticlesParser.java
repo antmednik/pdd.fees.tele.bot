@@ -2,6 +2,7 @@ package io.traffic.offences.fees.bot.data.text;
 
 import io.traffic.offences.fees.bot.data.exception.TrafficOffenceArticlesParserIllegalOperationException;
 import io.traffic.offences.fees.bot.domain.TrafficOffenceArticle;
+import io.traffic.offences.fees.bot.domain.TrafficOffenceArticleBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +12,7 @@ public class TrafficOffenceArticlesParser {
     private static final String ARTICLE_LINE_SEPARATOR = "---";
 
     private final List<TrafficOffenceArticle> articles;
-    private TrafficOffenceArticle.Builder currentArticleBuilder;
+    private TrafficOffenceArticleBuilder currentArticleBuilder;
 
     public TrafficOffenceArticlesParser() {
         this.articles = new ArrayList<>();
@@ -19,7 +20,7 @@ public class TrafficOffenceArticlesParser {
 
     public void add(String line) {
         if (currentArticleBuilder == null) {
-            currentArticleBuilder = new TrafficOffenceArticle.Builder().number(line);
+            currentArticleBuilder = new TrafficOffenceArticleBuilder().number(line);
         } else if (currentArticleBuilder.title() == null) {
             currentArticleBuilder.title(line);
         } else if (ARTICLE_LINE_SEPARATOR.equals(line)) {

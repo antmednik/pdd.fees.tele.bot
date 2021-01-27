@@ -11,7 +11,7 @@ import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-class TrafficOffenceArticlesParserTestArticle {
+class TrafficOffenceArticlesParserTest {
 
     @Test
     void givenCorrectDataWhenParsedThenPddArticlesBuildedCorrectly() {
@@ -33,22 +33,22 @@ class TrafficOffenceArticlesParserTestArticle {
 
         TrafficOffenceArticle article1 = articles.get(0);
         assertThat(article1).isNotNull();
-        assertThat(article1.number()).isEqualTo("01");
-        assertThat(article1.title()).isEqualTo("title 01");
-        assertThat(article1.text()).isEqualTo(
+        assertThat(article1.getNumber()).isEqualTo("01");
+        assertThat(article1.getTitle()).isEqualTo("title 01");
+        assertThat(article1.getText()).isEqualTo(
                 Stream.of("text 01", "text 11", "text 21").collect(Collectors.joining(System.lineSeparator())));
 
         TrafficOffenceArticle article2 = articles.get(1);
         assertThat(article2).isNotNull();
-        assertThat(article2.number()).isEqualTo("02");
-        assertThat(article2.title()).isEqualTo("title 02");
-        assertThat(article2.text()).isEqualTo("text 02");
+        assertThat(article2.getNumber()).isEqualTo("02");
+        assertThat(article2.getTitle()).isEqualTo("title 02");
+        assertThat(article2.getText()).isEqualTo("text 02");
 
         TrafficOffenceArticle article3 = articles.get(2);
         assertThat(article3).isNotNull();
-        assertThat(article3.number()).isEqualTo("03");
-        assertThat(article3.title()).isEqualTo("title 03");
-        assertThat(article3.text()).isEqualTo(
+        assertThat(article3.getNumber()).isEqualTo("03");
+        assertThat(article3.getTitle()).isEqualTo("title 03");
+        assertThat(article3.getText()).isEqualTo(
                 Stream.of("text 03", "text 13", "text 23", "text 33").collect(Collectors.joining(System.lineSeparator())));
     }
 

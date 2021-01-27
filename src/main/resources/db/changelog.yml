@@ -1,0 +1,6 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: am
+  - include:
+      file: db/migrations/001__create_table_handled_updates.sql

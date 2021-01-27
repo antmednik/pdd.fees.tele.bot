@@ -1,4 +1,4 @@
-package io.traffic.offences.fees.bot.telegram.generic;
+package io.traffic.offences.fees.bot.telegram.generic.dto;
 
 public class GenericUser {
     private final Integer id;
@@ -11,7 +11,7 @@ public class GenericUser {
     private final Boolean canReadAllGroupMessages;
     private final Boolean supportsInlineQueries;
 
-    public GenericUser(Integer id, Boolean isBot, String firstName, String lastName, String username, String languageCode, Boolean canJoinGroups, Boolean canReadAllGroupMessages, Boolean supportsInlineQueries) {
+    public GenericUser(Integer id, Boolean isBot, String firstName, String lastName, String username, String languageCode, Boolean canJoinGroups, Boolean canReadAllGroupMessages, Boolean supportsInlineQueries) { // NOSONAR
         this.id = id;
         this.isBot = isBot;
         this.firstName = firstName;

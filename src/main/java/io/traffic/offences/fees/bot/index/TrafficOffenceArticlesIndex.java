@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 /**
  * Functions:
@@ -25,26 +26,32 @@ import java.util.Optional;
  * 4. Search top 10 results by fuzzy query
  * 5. Search all results with pagination by fuzzy query
  */
-public class TrafficOffenceArticlesIndex implements AutoCloseable {
+class TrafficOffenceArticlesIndex implements AutoCloseable {
 
     private static final int LIMIT = 10;
 
     private final Directory memoryIndex;
     private final StandardAnalyzer analyzer;
     private Optional<IndexReader> indexReader;
+    private final List<String> articleNumbers;
+    private final Random random;
 
     public TrafficOffenceArticlesIndex() {
         memoryIndex = new RAMDirectory();   //NOSONAR
         analyzer = new StandardAnalyzer();
         indexReader = Optional.empty();
+        articleNumbers = new ArrayList<>();
+        random = new Random(System.currentTimeMillis());
     }
 
     public void build(List<TrafficOffenceArticle> articles) {
         IndexWriterConfig indexWriterConfig = new IndexWriterConfig(analyzer);
         try (IndexWriter writer = new IndexWriter(memoryIndex, indexWriterConfig)) {
-            articles.stream()
-                    .map(TrafficOffenceArticleDocumentWrapper::new)
-                    .forEach(wrapper -> write(writer, wrapper));
+            for (var article : articles) {
+                articleNumbers.add(article.getNumber());
+                var document = new TrafficOffenceArticleDocumentWrapper(article);
+                write(writer, document);
+            }
         } catch (IOException e) {
             throw new TrafficOffenceArticlesIndexBuildException("Unable to build index.", e);
         }
@@ -56,10 +63,10 @@ public class TrafficOffenceArticlesIndex implements AutoCloseable {
         }
     }
 
-    public List<TrafficOffenceArticle> searchTopTen(String query) {
+    public List<TrafficOffenceArticle> searchTopResults(String query) {
         Query queryObj;
         try {
-            MultiFieldQueryParser queryParser = new MultiFieldQueryParser(TrafficOffenceArticleDocumentWrapper.fields(), analyzer);
+            MultiFieldQueryParser queryParser = new MultiFieldQueryParser(TrafficOffenceArticleDocumentWrapper.Field.all(), analyzer);
             queryObj = queryParser.parse(query);
         } catch (ParseException e) {
             throw new TrafficOffenceArticlesIndexSearchException("Error while parsing query", e);
@@ -68,7 +75,7 @@ public class TrafficOffenceArticlesIndex implements AutoCloseable {
         return search(queryObj);
     }
 
-    public List<TrafficOffenceArticle> fuzzySearchTopTen(String query) {
+    public List<TrafficOffenceArticle> fuzzySearchTopResults(String query) {
         Query queryObj = new BooleanQuery.Builder()
                 .add(new FuzzyQuery(TrafficOffenceArticleDocumentWrapper.FieldTerm.number(query)), BooleanClause.Occur.SHOULD)
                 .add(new FuzzyQuery(TrafficOffenceArticleDocumentWrapper.FieldTerm.title(query)), BooleanClause.Occur.SHOULD)
@@ -78,7 +85,33 @@ public class TrafficOffenceArticlesIndex implements AutoCloseable {
         return search(queryObj);
     }
 
-    public List<TrafficOffenceArticle> search(Query query) {
+    public TrafficOffenceArticle randomArticle() {
+        int randomArticleIndex = random.nextInt(articleNumbers.size());
+        String articleNumber = articleNumbers.get(randomArticleIndex);
+        return articleByNumber(articleNumber);
+    }
+
+    public TrafficOffenceArticle articleByNumber(String articleNumber) {
+        Query queryObj;
+        try {
+            MultiFieldQueryParser queryParser = new MultiFieldQueryParser(
+                    new String[] { TrafficOffenceArticleDocumentWrapper.Field.number() },
+                    analyzer);
+            queryObj = queryParser.parse(articleNumber);
+        } catch (ParseException e) {
+            throw new TrafficOffenceArticlesIndexSearchException("Error while parsing query", e);
+        }
+
+        List<TrafficOffenceArticle> candidates = search(queryObj);
+        if (candidates.size() != 1) {
+            throw new TrafficOffenceArticlesIndexSearchException(
+                    String.format("Article with number '%s' not found.", articleNumber));
+        }
+
+        return candidates.get(0);
+    }
+
+    private List<TrafficOffenceArticle> search(Query query) {
         try {
             IndexSearcher searcher = new IndexSearcher(indexReader());
             TopDocs topDocs = searcher.search(query, LIMIT);

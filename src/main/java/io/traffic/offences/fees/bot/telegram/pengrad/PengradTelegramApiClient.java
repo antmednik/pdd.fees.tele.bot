@@ -1,31 +1,33 @@
 package io.traffic.offences.fees.bot.telegram.pengrad;
 
 import com.pengrad.telegrambot.TelegramBot;
+import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.model.User;
 import com.pengrad.telegrambot.model.WebhookInfo;
 import com.pengrad.telegrambot.request.*;
-import com.pengrad.telegrambot.response.BaseResponse;
-import com.pengrad.telegrambot.response.GetMeResponse;
-import com.pengrad.telegrambot.response.GetWebhookInfoResponse;
+import com.pengrad.telegrambot.response.*;
 import io.traffic.offences.fees.bot.telegram.generic.*;
-import org.springframework.beans.factory.annotation.Value;
+import io.traffic.offences.fees.bot.telegram.generic.dto.*;
+import lombok.RequiredArgsConstructor;
+import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class PengradTelegramApiClient implements TelegramApiClient {
 
     private final TelegramBot bot;
-
-    public PengradTelegramApiClient(@Value("${pdd.fees.telegram.token}") String token) {
-        bot = new TelegramBot(token);
-    }
+    private final Converter<User, GenericUser> genericUserConverter;
+    private final Converter<GenericGetUpdatesRequest, GetUpdates> genericGetUpdatesRequestConverter;
+    private final Converter<GetUpdatesResponse, GenericGetUpdatesResponse> genericGetUpdatesResponseConverter;
+    private final Converter<WebhookInfo, GenericWebhookInfo> genericWebhookInfoConverter;
+    private final Converter<GenericSendMessageRequest, SendMessage> genericSendMessageRequestSendMessageConverter;
+    private final Converter<Message, GenericMessage> messageToGenericMessageConverter;
 
     @Override
     public GenericUser getMe() {
-
         GetMeResponse response = send(new GetMe());
-
-        return null;
+        return null;    // todo
     }
 
     @Override
@@ -43,7 +45,26 @@ public class PengradTelegramApiClient implements TelegramApiClient {
     @Override
     public GenericWebhookInfo webhookInfo() {
         GetWebhookInfoResponse response = send(new GetWebhookInfo());
-        return genericWebhookInfo(response.webhookInfo());
+        return genericWebhookInfoConverter.convert(response.webhookInfo());
+    }
+
+    @Override
+    public GenericGetUpdatesResponse getUpdates(GenericGetUpdatesRequest request) {
+        GetUpdates getUpdatesRequest = genericGetUpdatesRequestConverter.convert(request);
+        GetUpdatesResponse originalResponse = send(getUpdatesRequest);
+        return genericGetUpdatesResponseConverter.convert(originalResponse);
+    }
+
+    @Override
+    public GetUpdatesResponse getUpdates(GetUpdates request) {
+        return send(request);
+    }
+
+    @Override
+    public GenericMessage sendMessage(GenericSendMessageRequest request) {
+        SendMessage convertedRequest = genericSendMessageRequestSendMessageConverter.convert(request);
+        SendResponse response = send(convertedRequest);
+        return messageToGenericMessageConverter.convert(response.message());
     }
 
     private <T extends BaseRequest<T, R>, R extends BaseResponse> R send(BaseRequest<T, R> request) {
@@ -52,17 +73,5 @@ public class PengradTelegramApiClient implements TelegramApiClient {
             return response;
         }
         throw new TelegramApiOpException(String.format("Error in response: '%s'.", response));
-    }
-
-    private GenericWebhookInfo genericWebhookInfo(WebhookInfo webhookInfo) {
-        return new GenericWebhookInfo(
-                webhookInfo.url(), webhookInfo.hasCustomCertificate(), webhookInfo.pendingUpdateCount()
-        );
-    }
-
-    private GenericUser genericUser(User user) {
-        return new GenericUser(
-                user.id(), user.isBot(), user.firstName(), user.lastName(), user.username(), user.languageCode(),
-                user.canJoinGroups(),  user.canReadAllGroupMessages(), user.supportsInlineQueries());
     }
 }

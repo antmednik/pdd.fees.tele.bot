@@ -1,4 +1,4 @@
-package io.traffic.offences.fees.bot.telegram.generic;
+package io.traffic.offences.fees.bot.telegram.generic.dto;
 
 public class GenericWebhookInfo {
     private final String url;
