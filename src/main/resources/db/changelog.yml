@@ -3,4 +3,4 @@ databaseChangeLog:
       id: 1
       author: am
   - include:
-      file: db/migrations/001__create_table_handled_updates.sql
+      file: db/migrations/001__create_table_last_handled_update.sql
