@@ -40,8 +40,10 @@ public class PollingBot {
 
             GetUpdates getUpdatesRequest = new GetUpdates()
                     .limit(properties.getUpdatesLimit())
-                    .timeout((int) properties.getTimeout().toSeconds());
-            lastHandledUpdate.ifPresent(lhu -> getUpdatesRequest.limit(lhu.getUpdateId() + 1));
+                    .timeout((int) properties.getTimeout().toSeconds())
+                    .allowedUpdates("message");
+            lastHandledUpdate.ifPresent(lhu -> getUpdatesRequest.offset(lhu.getUpdateId() + 1));
+            log.info("Get updates request = '{}'.", getUpdatesRequest.getParameters());
 
             GetUpdatesResponse response = telegramApiClient.getUpdates(getUpdatesRequest);
             log.info("Received updates count = '{}'.", response.updates().size());

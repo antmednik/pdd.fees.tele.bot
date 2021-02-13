@@ -1,5 +1,6 @@
 package io.traffic.offences.fees.bot.telegram.pengrad.converter;
 
+import com.pengrad.telegrambot.model.request.ParseMode;
 import com.pengrad.telegrambot.request.SendMessage;
 import io.traffic.offences.fees.bot.telegram.generic.dto.GenericSendMessageRequest;
 import org.springframework.core.convert.converter.Converter;
@@ -10,6 +11,7 @@ public class GenericSendMessageRequestToSendMessageConverter implements Converte
 
     @Override
     public SendMessage convert(GenericSendMessageRequest source) {
-        return new SendMessage(source.getChatId(), source.getText());
+        return new SendMessage(source.getChatId(), source.getText())
+                .parseMode(ParseMode.HTML);
     }
 }
